@@ -12,19 +12,20 @@ object functions {
    * Реализовать ф-цию  sum, которая будет суммировать 2 целых числа и выдавать результат
    */
 
-   def sum(x: Int, y: Int): Int = x + y
+  def sum(x: Int, y: Int): Int = x + y
 
-   sum(3, 5) // 8
+  sum(3, 5) // 8
 
-   val sum2: (Int, Int) => Int = (a, b) => a + b
+  val sum2: (Int, Int) => Int = (a, b) => a + b
   // val x2: Int => Int => Int = ???
 
 
-
-  val _: Int = sum2(5, 6) // 11
+  locally { // Pattern definition introduces Unit-valued member of functions; consider wrapping it in `locally { ... }`.
+    val _: Int = sum2(5, 6) // 11
+  }
   //val _: Int => Int = x2(5)
 
-//  def hof(f: (Int, Int) => Int) = ???
+  //  def hof(f: (Int, Int) => Int) = ???
 
   val sum3: (Int, Int) => Int = sum
 
@@ -42,7 +43,7 @@ object functions {
   })
 
 
-  
+
   // Partial function
 
   val divide: PartialFunction[(Int, Int), Int] = {
@@ -65,27 +66,27 @@ object functions {
 
 
   /**
-   *  Задание 1. Написать ф-цию метод isEven, которая будет вычислять является ли число четным
+   * Задание 1. Написать ф-цию метод isEven, которая будет вычислять является ли число четным
    */
-
+  def isEven(number: Integer): Boolean = if (number % 2 == 0) true else false
 
   /**
    * Задание 2. Написать ф-цию метод isOdd, которая будет вычислять является ли число нечетным
    */
-
+  def isOdd(number: Integer): Boolean = !isEven(number)
 
   /**
    * Задание 3. Написать ф-цию метод filterEven, которая получает на вход массив чисел и возвращает массив тех из них,
    * которые являются четными
    */
-
+  def filterEven(numbers: List[Integer]): List[Integer] = numbers.filter(isEven)
 
 
   /**
    * Задание 4. Написать ф-цию метод filterOdd, которая получает на вход массив чисел и возвращает массив тех из них,
    * которые являются нечетными
    */
-
+  def filterOdd(numbers: List[Integer]): List[Integer] = numbers.filter(isOdd)
 
   /**
    * return statement

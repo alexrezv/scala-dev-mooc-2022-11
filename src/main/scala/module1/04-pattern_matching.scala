@@ -14,9 +14,9 @@ object pattern_matching{
 
    i match {
      case Int => println("Int")
-     case String => println("String")
-     case v: List[String] =>
-     case v: List[Int] =>
+     case v: String => println("String")
+     // case v: List[String] => //non-variable type argument String in type pattern List[String] (the underlying of List[String]) is unchecked since it is eliminated by erasure
+     // case v: List[Int] => //same
    }
 
 
