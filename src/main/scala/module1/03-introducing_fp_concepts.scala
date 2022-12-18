@@ -253,27 +253,35 @@ object hof{
   }
 
 
-
-
-
-
   /**
    *
    * Реализовать метод printIfAny, который будет печатать значение, если оно есть
    */
+
+  def printIfAny[T](option: Option[T]): Unit = option match {
+    case Option.Some(v) => println(v)
+    case Option.None => ()
+  }
 
 
   /**
    *
    * Реализовать метод zip, который будет создавать Option от пары значений из 2-х Option
    */
-
+  def zip[A, B](tuple: (Option[A], Option[B])): Option[(A, B)] = tuple match {
+    case (Option.Some(a), Option.Some(b)) => Option.Some((a, b))
+    case _ => Option.None
+  }
 
   /**
    *
    * Реализовать метод filter, который будет возвращать не пустой Option
    * в случае если исходный не пуст и предикат от значения = true
    */
+  def filter[T](option: Option[T], predicate: T => Boolean): Option[T] = option match {
+    case Option.Some(v) if predicate.apply(v) => Option.Some(v)
+    case _ => Option.None
+  }
 
  }
 
