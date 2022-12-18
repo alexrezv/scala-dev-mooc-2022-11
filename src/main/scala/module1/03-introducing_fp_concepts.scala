@@ -2,8 +2,6 @@ package module1
 
 import java.util.UUID
 import scala.annotation.tailrec
-import java.time.Instant
-
 import scala.language.postfixOps
 
 
@@ -88,14 +86,24 @@ object recursion {
   }
 
 
-
-
   /**
    * реализовать вычисление N числа Фибоначчи
    * F0 = 0, F1 = 1, Fn = Fn-1 + Fn - 2
    *
    */
+  def fibonacci(n: Int): BigInt = {
+    @tailrec
+    def loop(_n: Int, previous: BigInt, current: BigInt): BigInt = {
+      _n match {
+        case -1 => previous
+        case 0 => current
+        case _ => loop(_n - 1, current, previous + current)
+      }
+    }
 
+    assert(0 <= n, "Number should be greater than 0!")
+    loop(n - 1, 0, 1)
+  }
 
 }
 
