@@ -1,11 +1,5 @@
 package module1
 
-import sun.security.util.Password
-
-import java.io.{Closeable, File}
-import scala.io.{BufferedSource, Source}
-import scala.util.{Try, Using}
-
 
 object type_system {
 
@@ -74,16 +68,26 @@ object type_system {
     }
 
 
+  /**
+   * Задание 1: Создать класс "Прямоугольник"(Rectangle),
+   * мы должны иметь возможность создавать прямоугольник с заданной
+   * длиной(length) и шириной(width), а также вычислять его периметр и площадь
+   *
+   */
+  trait Shape {
+    def perimeter: Double
+
+    def area: Double
+  }
+
+  case class Rectangle(length: Double, width: Double) extends Shape {
+    override def perimeter: Double = 2 * length + 2 * width
+
+    override def area: Double = length * width
+  }
 
 
 
-
-    /**
-     * Задание 1: Создать класс "Прямоугольник"(Rectangle),
-     * мы должны иметь возможность создавать прямоугольник с заданной
-     * длиной(length) и шириной(width), а также вычислять его периметр и площадь
-     *
-     */
 
 
     /**
