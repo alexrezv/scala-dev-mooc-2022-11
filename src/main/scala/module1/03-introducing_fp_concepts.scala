@@ -260,7 +260,7 @@ object hof{
 
   def printIfAny[T](option: Option[T]): Unit = option match {
     case Option.Some(v) => println(v)
-    case Option.None => ()
+    case Option.None =>
   }
 
 
@@ -299,10 +299,7 @@ object hof{
      /**
       * Метод cons, добавляет элемент в голову списка, для этого метода можно воспользоваться названием `::`
       */
-     def ::[TT >: T](elem: TT): List[TT] = this match {
-       case list@List.::(_, _) => List.::(elem, list)
-       case List.Nil => List.::(elem, List.Nil)
-     }
+     def ::[TT >: T](elem: TT): List[TT] = List.::(elem, this)
 
      /**
       * Метод mkString возвращает строковое представление списка, с учетом переданного разделителя
@@ -351,7 +348,8 @@ object hof{
        @tailrec
        def loop(list: List[T], acc: List[T]): List[T] = list match {
          case List.Nil => acc
-         case List.::(head, tail) => if (predicate.apply(head)) loop(tail, head :: acc) else loop(tail, acc)
+         case List.::(head, tail) if predicate(head) => loop(tail, head :: acc)
+         case List.::(_, tail) => loop(tail, acc)
        }
 
        loop(this, List.Nil) reverse

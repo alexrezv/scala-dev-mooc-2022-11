@@ -81,7 +81,7 @@ object type_system {
   }
 
   case class Rectangle(length: Double, width: Double) extends Shape {
-    override def perimeter: Double = 2 * length + 2 * width
+    override def perimeter: Double = 2 * (length + width)
 
     override def area: Double = length * width
   }
