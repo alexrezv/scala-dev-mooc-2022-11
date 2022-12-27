@@ -1,15 +1,19 @@
 package module1
 
-object subtyping{
-    /**
+object subtyping {
+  /**
    * Type Operators
    */
 
   trait Vehicle
-  trait Car        extends Vehicle
-  trait Moto       extends Vehicle
-  object Harley    extends Moto
-  object Mustang   extends Car
+
+  trait Car extends Vehicle
+
+  trait Moto extends Vehicle
+
+  object Harley extends Moto
+
+  object Mustang extends Car
 
   type IsSubtypeOf[A, B >: A]
 
@@ -22,7 +26,7 @@ object subtyping{
    *
    */
 
-   val t1 = ???
+  val t1: IsSubtypeOf[Car, Vehicle] = ???
 
 
   /**
@@ -31,7 +35,7 @@ object subtyping{
    *
    */
 
-   val t2 = ???
+  val t2: IsSubtypeOf[Mustang.type, Car] = ???
 
 
   /**
@@ -40,7 +44,7 @@ object subtyping{
    *
    */
 
-   val t3 = ???
+  val t3: IsSupertypeOf[Vehicle, Harley.type] = ???
 
 
   /**
@@ -48,14 +52,12 @@ object subtyping{
    * чтобы среди идущих ниже выражений, те которые корректны по смыслу компилировались, а остальные нет
    */
 
-  def isInstanceOf[A, B >: A](a: A): Unit = ???
+  def isInstanceOf[A, B <: A](a: A): Unit = ???
 
-
-
-
-    // lazy val mustCompile1    = isInstanceOf[Car, Mustang.type](Mustang)
-    // lazy val mustCompile2    = isInstanceOf[Moto, Harley.type](Harley)
-    // lazy val mustNotCompile1 = isInstanceOf[Mustang.type, Moto](Mustang)
-    // lazy val mustNotCompile2 = isInstanceOf[Harley.type, Car](Harley)
+  lazy val mustCompile1    = isInstanceOf[Car, Mustang.type](Mustang)
+  lazy val mustCompile2    = isInstanceOf[Moto, Harley.type](Harley)
+  // do not conform to method isInstanceOf's type parameter bounds [A,B <: A]
+//  lazy val mustNotCompile1 = isInstanceOf[Mustang.type, Moto](Mustang)
+//  lazy val mustNotCompile2 = isInstanceOf[Harley.type, Car](Harley)
 
 }

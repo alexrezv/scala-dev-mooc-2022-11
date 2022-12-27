@@ -14,9 +14,9 @@ object pattern_matching{
 
    i match {
      case Int => println("Int")
-     case String => println("String")
-     case v: List[String] =>
-     case v: List[Int] =>
+     case v: String => println("String")
+     // case v: List[String] => //non-variable type argument String in type pattern List[String] (the underlying of List[String]) is unchecked since it is eliminated by erasure
+     // case v: List[Int] => //same
    }
 
 
@@ -117,36 +117,41 @@ object pattern_matching{
 
       val alex = Employee("Alex", Address("XXX", 221))
 
-      /**
-       * воспользовавшись паттерн матчингом напечатать номер из поля адрес
-       */
+  /**
+   * воспользовавшись паттерн матчингом напечатать номер из поля адрес
+   */
+  def printAddress(employee: Employee): Unit = employee match {
+    case Employee(_, address) => println(address)
+  }
 
 
-
-      /**
-       * Паттерн матчинг может содержать литералы.
-       * Реализовать паттерн матчинг на alex с двумя кейсами.
-       * 1. Имя должно соотвествовать Alex
-       * 2. Все остальные
-       */
-
-
-
-
-      /**
-       * Паттерны могут содержать условия. В этом случае case сработает,
-       * если и паттерн совпал и условие true.
-       * Условия в паттерн матчинге называются гардами.
-       */
+  /**
+   * Паттерн матчинг может содержать литералы.
+   * Реализовать паттерн матчинг на alex с двумя кейсами.
+   * 1. Имя должно соотвествовать Alex
+   * 2. Все остальные
+   */
+  def isAlex(employee: Employee): Boolean = employee match {
+    case Employee("Alex", _) => true
+    case _ => false
+  }
 
 
+  /**
+   * Паттерны могут содержать условия. В этом случае case сработает,
+   * если и паттерн совпал и условие true.
+   * Условия в паттерн матчинге называются гардами.
+   */
 
-
-      /**
-       * Реализовать паттерн матчинг на alex с двумя кейсами.
-       * 1. Имя должно начинаться с A
-       * 2. Все остальные
-       */
+  /**
+   * Реализовать паттерн матчинг на alex с двумя кейсами.
+   * 1. Имя должно начинаться с A
+   * 2. Все остальные
+   */
+  def nameStartsWithA(employee: Employee): Boolean = employee match {
+    case Employee(name, _) if name.startsWith("A") => true
+    case _ => false
+  }
 
 
       /**
