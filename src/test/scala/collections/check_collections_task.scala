@@ -1,13 +1,13 @@
 package collections
 
-import collections.task_collections.{Auto, capitalizeIgnoringASCII, filterAllLeftDealerAutoWithoutRight, intersectionAuto, numbersToNumericString}
+import collections.task_collections._
 import org.scalatest.flatspec.AnyFlatSpec
 
 class check_collections_task extends AnyFlatSpec {
 
   "check capitalizeIgnoringASCII" should "ok" in  {
     assert(capitalizeIgnoringASCII(List("Lorem", "ipsum", "dolor", "sit", "amet")) == List("Lorem", "IPSUM", "DOLOR", "SIT", "AMET"))
-    assert(capitalizeIgnoringASCII(List("Оказывается", ",", "ЗвУк", "КЛАВИШЬ")) === List("Оказывается", ",", "звук", "клавишь"))
+    assert(capitalizeIgnoringASCII(List("Оказывается", ",", "ЗвУк", "КЛАВИШ")) === List("Оказывается", ",", "звук", "клавиш"))
   }
 
   "check numbersToNumericString" should "ok" in {
