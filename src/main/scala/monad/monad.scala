@@ -1,7 +1,7 @@
 package object monad {
 
   /**
-   * Реализуйте методы map / flatMap / withFilter чтобы работал код и законы монад соблюдались
+   * Реализуйте методы map / flatMap / withFilter чтобы работал код и законы монад соблюдались.<br>
    * HINT: для проверки на пустой элемент можно использовать eq
    */
 
@@ -9,20 +9,17 @@ package object monad {
 
     def get: A
 
-    def pure[R](x: R): Wrap[R] = ???
+    private def pure[R](x: R): Wrap[R] = NonEmptyWrap(x)
 
-    def flatMap[R](f: A => Wrap[R]): Wrap[R] = {
-      ???
+    def flatMap[R](f: A => Wrap[R]): Wrap[R] = this match {
+      case NonEmptyWrap(result) => f(result)
+      case _ => EmptyWrap
     }
 
     // HINT: map можно реализовать через pure и flatMap
-    def map[R](f: A => R): Wrap[R] = {
-      ???
-    }
+    def map[R](f: A => R): Wrap[R] = flatMap(it => pure(f(it)))
 
-    def withFilter(f: A => Boolean): Wrap[A] = {
-      ???
-    }
+    def withFilter(f: A => Boolean): Wrap[A] = flatMap(it => if (f(it)) pure(it) else EmptyWrap)
 
   }
 
