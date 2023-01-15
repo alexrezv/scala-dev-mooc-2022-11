@@ -3,7 +3,7 @@ package futures
 import org.scalatest.flatspec.AnyFlatSpec
 
 import java.util.concurrent.atomic.AtomicInteger
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration.{Duration, SECONDS}
 import scala.concurrent.{Await, ExecutionContext, Future}
 
 class futures_sequence_test extends AnyFlatSpec {
@@ -21,10 +21,10 @@ class futures_sequence_test extends AnyFlatSpec {
       }
     }
 
-    override def reportFailure(cause: Throwable): Unit = ???
+    override def reportFailure(cause: Throwable): Unit = println(cause.getMessage)
   }
 
-  def await[A](future: Future[A]): A = Await.result(future, Duration.Inf)
+  def await[A](future: Future[A]): A = Await.result(future, Duration.apply(20, SECONDS))
 
   def fut(i: Int)(implicit ex: ExecutionContext): Future[Int] = Future {
     Thread.sleep(1000)
@@ -33,12 +33,12 @@ class futures_sequence_test extends AnyFlatSpec {
 
   "full sequence" should "process list of success futures" in {
     /**
-      * best answer will process task with 9 runnable
-      * good answer will process task with 12 runnable
-      * satisfied answer will process task with any number of runnable
-      * choose which one you want
-      * */
-    val limit = 100
+     * best answer will process task with 9 runnable
+     * good answer will process task with 12 runnable
+     * satisfied answer will process task with any number of runnable
+     * choose which one you want
+     * */
+    val limit = 9
 
     implicit val exec: ExecutionContext = limitedExec(limit)
     val fut1 = fut(1)
@@ -56,7 +56,7 @@ class futures_sequence_test extends AnyFlatSpec {
      * choose which one you want
      * */
 
-    val limit = 100
+    val limit = 7
 
     implicit val exec: ExecutionContext = limitedExec(limit)
     val ex1 = new Exception("ex1")
@@ -65,7 +65,7 @@ class futures_sequence_test extends AnyFlatSpec {
     val failed2 = Future.failed(ex2)
     val fut1 = fut(1)
 
-   assert(await(futures.task_futures_sequence.fullSequence[Int](List(fut1, failed1, failed2))) === (List(1), List(ex1, ex2)))
+    assert(await(futures.task_futures_sequence.fullSequence[Int](List(fut1, failed1, failed2))) === (List(1), List(ex1, ex2)))
   }
 
   it should "process list of failures" in {
@@ -75,7 +75,7 @@ class futures_sequence_test extends AnyFlatSpec {
      * choose which one you want
      * */
 
-    val limit = 100
+    val limit = 4
 
     implicit val exec: ExecutionContext = limitedExec(limit)
     val ex1 = new Exception("ex1")
@@ -83,6 +83,6 @@ class futures_sequence_test extends AnyFlatSpec {
     val failed1 = Future.failed(ex1)
     val failed2 = Future.failed(ex2)
 
-   assert(await(futures.task_futures_sequence.fullSequence[Int](List(failed1, failed2))) === (List(), List(ex1, ex2)))
+    assert(await(futures.task_futures_sequence.fullSequence[Int](List(failed1, failed2))) === (List(), List(ex1, ex2)))
   }
 }
