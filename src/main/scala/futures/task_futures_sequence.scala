@@ -1,7 +1,7 @@
 package futures
 
 
-import scala.concurrent.{ExecutionContext, Future, Promise}
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 object task_futures_sequence {
@@ -22,14 +22,14 @@ object task_futures_sequence {
    */
   def fullSequence[A](futures: List[Future[A]])
                      (implicit ex: ExecutionContext): Future[(List[A], List[Throwable])] = {
-    futures.foldRight(Future.successful((List[A](), List[Throwable]()))) {
-      (task, acc) => {
-        val p = Promise[(List[A], List[Throwable])]
-        task.onComplete {
-          case Success(value) => acc.map(it => p.success((value :: it._1, it._2)))
-          case Failure(exception) => acc.map(it => p.success((it._1, exception :: it._2)))
+    futures.foldLeft(Future.successful((List[A](), List[Throwable]()))) {
+      (acc, task) => {
+        acc.flatMap {
+          case (values, exceptions) => task.transformWith {
+            case Success(value) => Future.successful(values :+ value, exceptions)
+            case Failure(exception) => Future.successful(values, exceptions :+ exception)
+          }
         }
-        p.future
       }
     }
   }
