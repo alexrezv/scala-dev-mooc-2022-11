@@ -4,6 +4,8 @@ scalaVersion := "3.2.1"
 
 name := "scala3proj"
 
-scalacOptions += "-Ypartial-unification"
-
-libraryDependencies += "org.typelevel" %% "cats-core" % "2.9.0"
+libraryDependencies := Seq(
+  "org.typelevel" %% "cats-core" % "2.9.0",
+  "org.scalactic" %% "scalactic" % "3.2.15",
+  "org.scalatest" %% "scalatest" % "3.2.15" % Test
+)
