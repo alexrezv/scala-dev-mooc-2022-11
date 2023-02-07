@@ -1,10 +1,11 @@
 package scala_3.extendingclasses
 
-//import Extensionmethods.Circle
+import scala_3.extendingclasses.Extensionmethods.Circle
+
 
 object homework1 {
   extension (x: String)
-    def + = ???
+    def + ?????
 
     @main def part1Ex(): Unit ={
       println("1" + "33")
@@ -12,12 +13,12 @@ object homework1 {
 }
 
 object homework2 {
-  /*enum CompletionArg {
+  enum CompletionArg {
     ???
     //см приведенную ссылку
-  }*/
+  }
 
-  /*object CompletionArg {
+  object CompletionArg {
     given fromString: Conversion[String, CompletionArg] = ???
 
     given fromInt: Conversion[Int, CompletionArg] = ???
@@ -30,12 +31,12 @@ object homework2 {
     println(Completions.complete("String"))
     println(Completions.complete(1))
     println(Completions.complete(7f))
-  }*/
+  }
 }
 
 
 object homework3 {
-  /*opaque type Logarithm = Double
+  opaque type Logarithm = Double
 
   object Logarithm{
     //см приведенную ссылку
@@ -48,11 +49,12 @@ object homework3 {
 
 
   @main def part3Ex(): Unit ={
+    import homework3.Logarithm
 
     val l = Logarithm(1.0)
     val l2 = Logarithm(2.0)
     val l3 = l * l2
     val l4 = l + l2
 
-  }*/
+  }
 }
