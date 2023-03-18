@@ -26,10 +26,14 @@ version := "1.0"
 // You can define other libraries as dependencies in your build like this:
 
 libraryDependencies ++= Seq(
+  "org.typelevel" %% "cats-core" % "2.9.0",
+  "org.typelevel" %% "cats-effect" % "3.4.8",
   "org.scala-lang.modules" %% "scala-parser-combinators" % "2.2.0",
   "org.scalactic" %% "scalactic" % "3.2.15",
   "org.scalatest" %% "scalatest" % "3.2.15" % Test
 ) ++ Dependencies.zio ++ Dependencies.zioConfig
+
+addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
 
 // Here, `libraryDependencies` is a set of dependencies, and by using `+=`,
 // we're adding the scala-parser-combinators dependency to the set of dependencies
