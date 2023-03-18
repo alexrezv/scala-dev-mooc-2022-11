@@ -6,19 +6,23 @@ import module2.type_classes.JsValue.{JsNull, JsNumber, JsString}
 object type_classes {
 
   sealed trait JsValue
+
   object JsValue {
     final case class JsObject(get: Map[String, JsValue]) extends JsValue
+
     final case class JsString(get: String) extends JsValue
+
     final case class JsNumber(get: Double) extends JsValue
+
     final case object JsNull extends JsValue
   }
 
   // 1
-  trait JsonWriter[T]{
+  trait JsonWriter[T] {
     def write(v: T): JsValue
   }
 
-  object JsonWriter{
+  object JsonWriter {
     def apply[T](implicit w: JsonWriter[T]) = w
 
     def from[T](f: T => JsValue) = new JsonWriter[T] {
@@ -37,7 +41,7 @@ object type_classes {
 
   }
 
-  implicit class JsonSyntax[T](v: T){
+  implicit class JsonSyntax[T](v: T) {
     def toJson(implicit w: JsonWriter[T]): JsValue = w.write(v)
   }
 
@@ -58,12 +62,12 @@ object type_classes {
 
 
   // 1 компонент
-  trait Ordering[T]{
+  trait Ordering[T] {
     def less(a: T, b: T): Boolean
   }
 
   // 2 значения
-  object Ordering{
+  object Ordering {
 
     def from[A](f: (A, A) => Boolean): Ordering[A] = new Ordering[A] {
       override def less(a: A, b: A): Boolean = f(a, b)
@@ -77,7 +81,7 @@ object type_classes {
   // 3 implicit parameter
 
   def _max[A](a: A, b: A)(implicit ordering: Ordering[A]): A =
-    if(ordering.less(a, b)) b else a
+    if (ordering.less(a, b)) b else a
 
   _max(5, 10) // 10
   _max("ab", "abcd") // abcd
@@ -86,20 +90,20 @@ object type_classes {
   // ===
   val result = List("a", "b", "c").filter(str => str === "")
 
-  trait Eq[T]{
+  trait Eq[T] {
     def ===(a: T, b: T): Boolean
   }
 
-  object Eq{
+  object Eq {
 
     def apply[T](): Eq[T] = ???
 
-    implicit val eqStr: Eq[String] = new Eq[String]{
+    implicit val eqStr: Eq[String] = new Eq[String] {
       override def ===(a: String, b: String): Boolean = a == b
     }
   }
 
-  implicit class EqSyntax[T](a: T){
+  implicit class EqSyntax[T](a: T) {
     def ===(b: T)(implicit eq: Eq[T]): Boolean = eq.===(a, b)
   }
 

@@ -9,7 +9,6 @@ object type_system {
    */
 
 
-
   def absurd(v: Nothing) = ???
 
 
@@ -17,55 +16,54 @@ object type_system {
 
   // работа с ресурсом
 
-//  lazy val file: File = ???
-//
-//  lazy val source: BufferedSource = Source.fromFile(file)
-//
-//  lazy val lines: List[String] = source.getLines().toList
-//
-//  source.close()
-//
-//  val lines2 = try{
-//    source.getLines().toList
-//  } finally {
-//    source.close()
-//  }
-//
-//
-//  def ensureClose[S <: Closeable, R](source: S)(f: S => R): R = {
-//    try{
-//      f(source)
-//    } finally {
-//      source.close()
-//    }
-//  }
-//
-//  val result1: List[String] = ensureClose(source)(s => s.getLines().toList)
-
+  //  lazy val file: File = ???
+  //
+  //  lazy val source: BufferedSource = Source.fromFile(file)
+  //
+  //  lazy val lines: List[String] = source.getLines().toList
+  //
+  //  source.close()
+  //
+  //  val lines2 = try{
+  //    source.getLines().toList
+  //  } finally {
+  //    source.close()
+  //  }
+  //
+  //
+  //  def ensureClose[S <: Closeable, R](source: S)(f: S => R): R = {
+  //    try{
+  //      f(source)
+  //    } finally {
+  //      source.close()
+  //    }
+  //  }
+  //
+  //  val result1: List[String] = ensureClose(source)(s => s.getLines().toList)
 
 
   // ограничения связанные с дженериками
 
 
-    /**
-     *
-     * class
-     *
-     * конструкторы / поля / методы / компаньоны
-     */
+  /**
+   *
+   * class
+   *
+   * конструкторы / поля / методы / компаньоны
+   */
 
-    class User private (val email: String, val password: String){
+  class User private(val email: String, val password: String) {
 
-      def this(email: String) = this(email, "123")
+    def this(email: String) = this(email, "123")
 
-    }
+  }
 
-    val user: User = User.from("foo@foo.com", "123")
+  val user: User = User.from("foo@foo.com", "123")
 
-    object User {
-      def from(email: String, password: String): User =
-        new User(email, password)
-    }
+  object User {
+    def from(email: String, password: String): User =
+      new User(email, password)
+  }
 
 
   /**
@@ -87,73 +85,67 @@ object type_system {
   }
 
 
+  /**
+   * object
+   *
+   * 1. Паттерн одиночка
+   * 2. Ленивая инициализация
+   * 3. Могут быть компаньоны
+   */
 
 
+  /**
+   * case class
+   *
+   */
 
-    /**
-     * object
-     *
-     * 1. Паттерн одиночка
-     * 2. Ленивая инициализация
-     * 3. Могут быть компаньоны
-     */
+  case class User2(email: String, password: String)
 
+  val u2 = User2("foo@foo.com", "123")
 
-    /**
-     * case class
-     *
-     */
-
-    case class User2(email: String, password: String)
-
-    val u2 = User2("foo@foo.com", "123")
-
-    val u3 = u2.copy(password = "345")
+  val u3 = u2.copy(password = "345")
 
 
-    // создать case класс кредитная карта с двумя полями номер и cvc
+  // создать case класс кредитная карта с двумя полями номер и cvc
 
 
-    /**
-     * case object
-     *
-     * Используются для создания перечислений или же в качестве сообщений для Акторов
-     */
+  /**
+   * case object
+   *
+   * Используются для создания перечислений или же в качестве сообщений для Акторов
+   */
 
 
-    /**
-     * trait
-     *
-     */
+  /**
+   * trait
+   *
+   */
 
-    trait WithId{
-      def id: String
-    }
+  trait WithId {
+    def id: String
+  }
 
-    sealed trait UserService{
-      def getUserById(id: String): User
-      def save(u: User): Unit
-    }
+  sealed trait UserService {
+    def getUserById(id: String): User
 
-    class UserServiceImpl extends UserService with WithId {
-      def getUserById(id: String): User = ???
+    def save(u: User): Unit
+  }
 
-      def save(u: User): Unit = ???
+  class UserServiceImpl extends UserService with WithId {
+    def getUserById(id: String): User = ???
 
-      def id: String = ???
-    }
+    def save(u: User): Unit = ???
 
-    val uu = new UserService with WithId {
-      override def getUserById(id: String): User = ???
+    def id: String = ???
+  }
 
-      override def save(u: User): Unit = ???
+  val uu = new UserService with WithId {
+    override def getUserById(id: String): User = ???
 
-      def id: String = ???
-    }
+    override def save(u: User): Unit = ???
 
-
-
-
+    def id: String = ???
+  }
 
 
   class A {

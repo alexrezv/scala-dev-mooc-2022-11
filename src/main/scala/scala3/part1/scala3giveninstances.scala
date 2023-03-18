@@ -1,7 +1,6 @@
 package part1.scala3giveninstances
 
 
-
 /*trait Ord[T]:
   def compare (x: T, y: T): Int
   extension (x:T)
@@ -36,29 +35,6 @@ object  scala3test{
 
 
 */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /*

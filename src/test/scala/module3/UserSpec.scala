@@ -1,21 +1,17 @@
 package module3
 
+import module3.emailService.{Email, EmailAddress, EmailServiceMock, Html}
+import module3.userDAO.UserDAOMock
+import module3.userService.{User, UserID, UserService}
 import zio.console.Console
-import zio.{Has, ZIO, ZLayer}
-import zio.test.Assertion.{anything, equalTo, isUnit}
+import zio.test.Assertion.{anything, equalTo}
 import zio.test.environment.TestConsole
 import zio.test.mock.Expectation.{unit, value}
-import zio.test.{DefaultRunnableSpec, ZSpec, ZTestEnv, assertM, suite, testM}
-import zio.test._
-import userDAO.UserDAOMock
-import userService.{User, UserID, UserService}
-import emailService.{Email, EmailAddress, EmailService, EmailServiceMock, Html}
-import zio.test.mock.Expectation
-import zio.test.mock.Result
+import zio.test.{DefaultRunnableSpec, assertM, suite, testM}
 
-object UserSpec extends DefaultRunnableSpec{
-  override def spec = suite("User spec"){
-    testM("notify user"){
+object UserSpec extends DefaultRunnableSpec {
+  override def spec = suite("User spec") {
+    testM("notify user") {
 
       val sendMailMock = EmailServiceMock.SendMail(
         equalTo(Email(EmailAddress("test@test.com"), Html("Hello here"))), unit

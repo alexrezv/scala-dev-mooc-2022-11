@@ -1,14 +1,12 @@
 package module3
 
-import zio.duration.Duration
-import zio.{Has, IO, RIO, Task, UIO, URIO, ZIO}
-import zio.duration.durationInt
-
-import scala.language.postfixOps
-import module1.type_system
 import zio.clock.Clock
 import zio.console.Console
+import zio.duration.durationInt
 import zio.random.Random
+import zio.{IO, RIO, Task, ZIO}
+
+import scala.language.postfixOps
 
 object di {
 
@@ -19,24 +17,23 @@ object di {
   type User
 
 
-  trait DBService{
+  trait DBService {
     def tx[T](query: Query[T]): IO[DBError, QueryResult[T]]
   }
 
-  trait EmailService{
+  trait EmailService {
     def makeEmail(email: String, body: String): Task[Email]
+
     def sendEmail(email: Email): Task[Unit]
   }
 
-  trait LoggingService{
+  trait LoggingService {
     def log(str: String): Task[Unit]
   }
 
-  trait UserService{
-      def getUserBy(id: Int): RIO[LoggingService, User]
+  trait UserService {
+    def getUserBy(id: Int): RIO[LoggingService, User]
   }
-
-
 
 
   type MyEnv = Random with Clock with Console
@@ -44,25 +41,25 @@ object di {
   /**
    * Написать эффект который напечатет в консоль приветствие, подождет 5 секунд,
    * сгенерит рандомное число, напечатает его в консоль
-   *   Console
-   *   Clock
-   *   Random
+   * Console
+   * Clock
+   * Random
    */
 
-//    trait Console{
-//      def putStrLn(string: String): UIO[Unit]
-//    }
-//
-//    trait Clock {
-//      def sleep(duration: Duration): UIO[Unit]
-//    }
-//
-//    trait Random{
-//      def nextInt(): UIO[Int]
-//    }
+  //    trait Console{
+  //      def putStrLn(string: String): UIO[Unit]
+  //    }
+  //
+  //    trait Clock {
+  //      def sleep(duration: Duration): UIO[Unit]
+  //    }
+  //
+  //    trait Random{
+  //      def nextInt(): UIO[Int]
+  //    }
 
 
-  lazy val e1: ZIO[Random with Clock with Console, Nothing, Unit] = for{
+  lazy val e1: ZIO[Random with Clock with Console, Nothing, Unit] = for {
     console <- ZIO.environment[Console].map(_.get)
     clock <- ZIO.environment[Clock].map(_.get)
     random <- ZIO.environment[Random].map(_.get)
@@ -95,7 +92,6 @@ object di {
   lazy val queryAndNotify = ???
 
 
-
   lazy val services: UserService with EmailService with LoggingService = ???
 
   lazy val dBService: DBService = ???
@@ -110,7 +106,7 @@ object di {
 
   // provide some
   lazy val e4: ZIO[UserService, Throwable, (User, Unit)] = combined2.provideSome[UserService](f)
-  
+
   // provide
   lazy val e5 = ???
 

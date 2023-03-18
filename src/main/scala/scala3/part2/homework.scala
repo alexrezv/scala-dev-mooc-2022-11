@@ -1,4 +1,5 @@
 package part2.homework
+
 /*
 object homework1 {
   extension (x: String)

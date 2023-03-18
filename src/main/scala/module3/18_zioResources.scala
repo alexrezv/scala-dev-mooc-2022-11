@@ -1,16 +1,13 @@
 package module3
 
-import module3.toyZManaged.ZManaged
 import module3.tryFinally.traditional.Resource
-import zio.{IO, RIO, Task, UIO, URIO, ZIO}
-import zio.console.{Console, putStrLn}
+import zio.{Task, URIO, ZIO}
 
-import java.io.{BufferedReader, Closeable, File, FileReader, IOException}
-import scala.concurrent.{Future, Promise}
-import scala.io.Source
-import scala.util.{Failure, Success, Try, Using}
+import java.io.IOException
+import scala.concurrent.Future
+import scala.io.{BufferedSource, Source}
 import scala.language.postfixOps
-import scala.io.BufferedSource
+import scala.util.{Failure, Success}
 
 object tryFinally {
 
@@ -33,7 +30,7 @@ object tryFinally {
 
     lazy val result1: Unit = {
       val resource = acquireResource
-      try{
+      try {
         use(resource)
       } finally {
         releaseResource(resource)
@@ -57,16 +54,17 @@ object tryFinally {
      * Прочитать строки из файла test.txt
      */
 
-    val result: List[String] = withResource(Source.fromFile("test.txt"))(_.close()){ source =>
+    val result: List[String] = withResource(Source.fromFile("test.txt"))(_.close()) { source =>
       source.getLines().toList
     }
 
   }
 
-  object future{
+  object future {
     implicit val global = scala.concurrent.ExecutionContext.global
 
     def acquireFutureResource: Future[Resource] = ???
+
     def use(resource: Resource): Future[Unit] = ???
 
     def releaseResource(resource: Resource): Future[Unit] = ???
@@ -77,15 +75,15 @@ object tryFinally {
      *
      */
 
-    implicit class FutureOps[A](future: Future[A]){
+    implicit class FutureOps[A](future: Future[A]) {
       def ensuring(finalizer: Future[Any]): Future[A] = {
-        future.transformWith{
+        future.transformWith {
           case Success(v) => finalizer.flatMap(_ => Future.successful(v))
           case Failure(ex) => finalizer.flatMap(_ => Future.failed(ex))
         }
       }
     }
-     
+
 
     /**
      * Написать код, который получит ресурс, воспользуется им и освободит
@@ -96,13 +94,14 @@ object tryFinally {
 
   }
 
-  object zioBracket{
+  object zioBracket {
 
 
     /**
      * реалтзовать ф-цию, которая будет описывать открытие файла с помощью ZIO эффекта
      */
     def openFile(fileName: String): Task[BufferedSource] = ZIO.effect(Source.fromFile(fileName))
+
     /**
      * реалтзовать ф-цию, которая будет описывать закрытие файла с помощью ZIO эффекта
      */
@@ -113,12 +112,12 @@ object tryFinally {
      * Написать эффект, котрый прочитает строчки из файла и выведет их в консоль
      */
 
-    def handleFile(file: Source): Task[List[Unit]] = ZIO.foreach(file.getLines().toList){ str =>
+    def handleFile(file: Source): Task[List[Unit]] = ZIO.foreach(file.getLines().toList) { str =>
       ZIO.effect(println(str))
     }
 
-    ZIO.bracket(openFile("test.txt"))(closeFile){ f1 =>
-          handleFile(f1)
+    ZIO.bracket(openFile("test.txt"))(closeFile) { f1 =>
+      handleFile(f1)
     }
 
     /**
@@ -126,8 +125,8 @@ object tryFinally {
      * выведет их в консоль и корректно закроет оба файла
      */
 
-    val twoFiles = ZIO.bracket(openFile("test1.txt"))(closeFile){ f1 =>
-      ZIO.bracket(openFile("test2.txt"))(closeFile){ f2 =>
+    val twoFiles = ZIO.bracket(openFile("test1.txt"))(closeFile) { f1 =>
+      ZIO.bracket(openFile("test2.txt"))(closeFile) { f2 =>
         handleFile(f1) zipRight handleFile(f2)
       }
     }
@@ -146,14 +145,13 @@ object tryFinally {
 
 }
 
-object toyZManaged{
-
-  import  module3.tryFinally.zioBracket._
+object toyZManaged {
 
   final case class ZManaged[-R, +E, A](
                                         acquire: ZIO[R, E, A],
                                         release: A => URIO[R, Any]
-                                      ){ self =>
+                                      ) {
+    self =>
 
 
     def use[R1 <: R, E1 >: E, B](f: A => ZIO[R1, E1, B]): ZIO[R1, E1, B] =
@@ -167,10 +165,10 @@ object toyZManaged{
 
 }
 
-object zioZManaged{
+object zioZManaged {
 
+  import module3.tryFinally.zioBracket._
   import zio.ZManaged
-  import  module3.tryFinally.zioBracket._
 
   /**
    * Создание ZManaged
@@ -183,11 +181,10 @@ object zioZManaged{
     ZManaged.make(openFile("test1.txt"))(closeFile)
 
   /** написать эффект открывающий / закрывающий второй файл
-    *
+   *
    */
-  lazy val file2 : ZManaged[Any, Throwable, BufferedSource] =
+  lazy val file2: ZManaged[Any, Throwable, BufferedSource] =
     ZManaged.make(openFile("test2.txt"))(closeFile)
-
 
 
   /**
@@ -207,7 +204,6 @@ object zioZManaged{
    */
 
 
-
   // Комбинирование
   lazy val combined: ZManaged[Any, Throwable, (BufferedSource, BufferedSource)] = file1 zip file2
 
@@ -218,7 +214,7 @@ object zioZManaged{
   /**
    * Написать эффект, который прочитает и выведет строчки из обоих файлов
    */
-  val combinedEffect = combined.use{ case (f1, f2) =>
+  val combinedEffect = combined.use { case (f1, f2) =>
     handleFile(f1) zipRight handleFile(f2)
   }
 
@@ -233,7 +229,7 @@ object zioZManaged{
 
 
   // множественное открытие / закрытие
-  lazy val files: ZManaged[Any, IOException, List[Source]] = ZManaged.foreach(fileNames){ n =>
+  lazy val files: ZManaged[Any, IOException, List[Source]] = ZManaged.foreach(fileNames) { n =>
     file(n)
   }
 
@@ -243,10 +239,10 @@ object zioZManaged{
 
   // Использование
 
-  def processFiles(file: Source *): Task[Unit] = ???
+  def processFiles(file: Source*): Task[Unit] = ???
 
   // обработать N файлов
-  lazy val r1 = files2.use(processFiles(_:_*))
+  lazy val r1 = files2.use(processFiles(_: _*))
 
 
   lazy val files3: ZManaged[Any, IOException, List[Source]] = ???
@@ -254,12 +250,12 @@ object zioZManaged{
   /**
    * Прочитать строчки из файлов и вернуть список этих строк используя files3
    */
-  lazy val r3: Task[List[String]] = files3.use{ l =>
-    ZIO.foreach(l){ s =>
+  lazy val r3: Task[List[String]] = files3.use { l =>
+    ZIO.foreach(l) { s =>
       ZIO.effect(s.getLines())
     }.map(_.flatten)
   }
-  
+
 
 
 
@@ -278,7 +274,7 @@ object zioZManaged{
   type Config
   val config: Task[Config] = ???
 
-  lazy val m2 = for{
+  lazy val m2 = for {
     c <- config.toManaged_
     tr <- mkTransactor(c)
     _ <- ZIO.effect("1").toManaged_

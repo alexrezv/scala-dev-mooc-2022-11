@@ -4,6 +4,7 @@ object monad_law {
   //Monad law:
 
   def decrementF(x: Int): Wrap[Int] = NonEmptyWrap(x - 1)
+
   def doubleIncrementF(x: Int): Wrap[Int] = NonEmptyWrap(x + 2)
 
   /**

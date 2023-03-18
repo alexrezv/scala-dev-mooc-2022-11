@@ -1,4 +1,5 @@
 package part2.scala3Intersections
+
 /*
 // intersection
 trait Test1:

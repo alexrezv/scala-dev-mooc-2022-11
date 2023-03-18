@@ -1,8 +1,5 @@
 package module2
 
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
-
 object implicits {
 
   // implicit conversions
@@ -10,13 +7,13 @@ object implicits {
   object implicit_conversions {
 
     /** Расширить возможности типа String, методом trimToOption, который возвращает Option[String]
-      * если строка пустая или null, то None
-      * если нет, то Some от строки со всеми удаленными начальными и конечными пробелами
-      */
+     * если строка пустая или null, то None
+     * если нет, то Some от строки со всеми удаленными начальными и конечными пробелами
+     */
 
-    lazy  val str: String = "we"
+    lazy val str: String = "we"
 
-    class StringOps(string: String){
+    class StringOps(string: String) {
       def trimToOption: Option[String] =
         Option(string).map(_.trim).filter(_.nonEmpty)
     }
@@ -27,28 +24,16 @@ object implicits {
 
     // implicit conversions ОПАСНЫ
 
-   implicit def strToInt(string: String): Int = Integer.parseInt(string)
+    implicit def strToInt(string: String): Int = Integer.parseInt(string)
 
     // "foo" / 42
-   implicit val seq = Seq("a", "b", "c")
+    implicit val seq = Seq("a", "b", "c")
 
     def log(str: String): Unit = println(str)
 
     val res = log(2)
 
   }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   object implicit_scopes {
@@ -60,25 +45,25 @@ object implicits {
     }
 
     object Printable {
-//       implicit val v: Printer[Bar] = new Printer[Bar] {
-//         override def print(v: Bar): Unit = println(s"Implicit from companion object Printable + $v")
-//       }
+      //       implicit val v: Printer[Bar] = new Printer[Bar] {
+      //         override def print(v: Bar): Unit = println(s"Implicit from companion object Printable + $v")
+      //       }
     }
 
     // companion object Printer
     object Printer {
-//       implicit val v: Printer[Bar] = new Printer[Bar] {
-//         override def print(v: Bar): Unit = println(s"Implicit from companion object Printer + $v")
-//       }
+      //       implicit val v: Printer[Bar] = new Printer[Bar] {
+      //         override def print(v: Bar): Unit = println(s"Implicit from companion object Printer + $v")
+      //       }
     }
 
     case class Bar()
 
     // companion object Bar
     object Bar {
-//        implicit val v: Printer[Bar] = new Printer[Bar] {
-//          override def print(v: Bar): Unit = println(s"Implcit from companion object Bar + $v")
-//        }
+      //        implicit val v: Printer[Bar] = new Printer[Bar] {
+      //          override def print(v: Bar): Unit = println(s"Implcit from companion object Bar + $v")
+      //        }
     }
 
     // some arbitrary object
@@ -92,12 +77,12 @@ object implicits {
 
     def foo[T](b: T)(implicit m: Printer[T]) = m.print(b)
 
-//     implicit val v1 = new Printer[Bar]{
-//       def print(v: Bar): Unit = println(s"Implcit from local val + $v")
-//     }
+    //     implicit val v1 = new Printer[Bar]{
+    //       def print(v: Bar): Unit = println(s"Implcit from local val + $v")
+    //     }
 
 
-  //  val result = foo(Bar())
+    //  val result = foo(Bar())
 
 
   }

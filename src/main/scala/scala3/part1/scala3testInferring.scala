@@ -1,4 +1,5 @@
 package part1.scala3testInferring
+
 /*
 object scala3testInferring {
   def descending[T](using asc: Ord[T]): Ord[T] = new Ord[T]:
@@ -15,23 +16,6 @@ object scala3testInferring {
 
 }
 */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /*

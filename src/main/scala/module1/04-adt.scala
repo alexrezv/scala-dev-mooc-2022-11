@@ -1,6 +1,5 @@
 package module1
 
-import java.time.LocalDate
 import java.time.YearMonth
 
 object adt {
@@ -8,24 +7,24 @@ object adt {
   object tuples {
 
     /** Tuples ()
-      */
+     */
     type ProductUnitBoolean = (Unit, Boolean)
 
     /** Создать возможные экземпляры с типом ProductUnitBoolean
-      */
+     */
 
-      lazy val p1 = ((), true)
-      lazy val p2 = ((), false)
+    lazy val p1 = ((), true)
+    lazy val p2 = ((), false)
 
     /** Реализовать тип Person который будет содержать имя и возраст
-      */
+     */
 
     type Person = (String, Int)
 
 
-    /**  Реализовать тип `CreditCard` который может содержать номер (String),
-      *  дату окончания (java.time.YearMonth), имя (String), код безопастности (Short)
-      */
+    /** Реализовать тип `CreditCard` который может содержать номер (String),
+     * дату окончания (java.time.YearMonth), имя (String), код безопастности (Short)
+     */
 
     type CreditCard = (String, YearMonth, String, Short)
 
@@ -36,7 +35,7 @@ object adt {
   object case_classes {
 
     /** Case classes
-      */
+     */
 
 
     //  Реализовать Person с помощью case класса
@@ -55,16 +54,15 @@ object adt {
   }
 
 
-
   object either {
 
     /** Sum
-      */
+     */
 
     /** Either - это наиболее общий способ хранить один из двух или более кусочков информации в одно время.
-      * Также как и кортежи обладает целым рядом полезных методов
-      * Иммутабелен
-      */
+     * Также как и кортежи обладает целым рядом полезных методов
+     * Иммутабелен
+     */
 
     // trait Ether
     // Right() extends Either
@@ -78,17 +76,19 @@ object adt {
     val v3: BooleanOrUnit = Right(())
 
     /** Реализовать экземпляр типа IntOrString с помощью конструктора Right(_)
-      */
+     */
     val intOrString = ???
 
 
     final case class CreditCard()
+
     final case class WireTransfer()
+
     final case class Cash()
 
     /** \
-      * Реализовать тип PaymentMethod который может быть представлен одной из альтернатив
-      */
+     * Реализовать тип PaymentMethod который может быть представлен одной из альтернатив
+     */
     type PaymentMethod = Either[CreditCard, Either[WireTransfer, Cash]]
 
   }
@@ -96,10 +96,13 @@ object adt {
   object sealed_traits {
 
     /** Также Sum type можно представить в виде sealed trait с набором альтернатив
-      */
+     */
     sealed trait PaymentMethod
+
     final case class CreditCard() extends PaymentMethod
+
     final case class WireTransfer() extends PaymentMethod
+
     final case class Cash() extends PaymentMethod
 
 
@@ -112,24 +115,39 @@ object adt {
     sealed trait Suit
 
     case object Clubs extends Suit
+
     case object Diamonds extends Suit
+
     case object Spades extends Suit
+
     case object Hearts extends Suit
 
     sealed trait Rank
 
     case object Two extends Rank
+
     case object Three extends Rank
+
     case object Four extends Rank
+
     case object Five extends Rank
+
     case object Six extends Rank
+
     case object Seven extends Rank
+
     case object Eight extends Rank
+
     case object Nine extends Rank
+
     case object Ten extends Rank
+
     case object Jack extends Rank
+
     case object Queen extends Rank
+
     case object King extends Rank
+
     case object Ace extends Rank
 
     case class Card(suit: Suit, rank: Rank)

@@ -54,10 +54,10 @@ object subtyping {
 
   def isInstanceOf[A, B <: A](a: A): Unit = ???
 
-  lazy val mustCompile1    = isInstanceOf[Car, Mustang.type](Mustang)
-  lazy val mustCompile2    = isInstanceOf[Moto, Harley.type](Harley)
+  lazy val mustCompile1 = isInstanceOf[Car, Mustang.type](Mustang)
+  lazy val mustCompile2 = isInstanceOf[Moto, Harley.type](Harley)
   // do not conform to method isInstanceOf's type parameter bounds [A,B <: A]
-//  lazy val mustNotCompile1 = isInstanceOf[Mustang.type, Moto](Mustang)
-//  lazy val mustNotCompile2 = isInstanceOf[Harley.type, Car](Harley)
+  //  lazy val mustNotCompile1 = isInstanceOf[Mustang.type, Moto](Mustang)
+  //  lazy val mustNotCompile2 = isInstanceOf[Harley.type, Car](Harley)
 
 }

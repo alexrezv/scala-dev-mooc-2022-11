@@ -2,12 +2,10 @@ package module3
 
 import zio._
 
-import java.io.IOException
 import scala.concurrent.Future
 import scala.io.StdIn
 import scala.language.postfixOps
 import scala.util.Try
-
 
 
 /** **
@@ -23,24 +21,24 @@ object toyModel {
    * Используя executable encoding реализуем свой zio
    */
 
-   case class ZIO[-R, +E, +A](run: R => Either[E, A]){ self =>
+  case class ZIO[-R, +E, +A](run: R => Either[E, A]) {
+    self =>
 
     def map[B](f: A => B): ZIO[R, E, B] = flatMap(a => ZIO(_ => Right(f(a))))
 
     def flatMap[R1 <: R, E1 >: E, B](f: A => ZIO[R1, E1, B]): ZIO[R1, E1, B] =
       ZIO(r => self.run(r).fold(e => ZIO.fail(e), v => f(v)).run(r))
-   }
+  }
 
-   object ZIO{
-     def effect[A](a: => A): ZIO[Any, Throwable, A] = try{
-       ZIO(_ => Right(a))
-     } catch {
-       case e: Throwable => ZIO(_ => Left(e))
-     }
+  object ZIO {
+    def effect[A](a: => A): ZIO[Any, Throwable, A] = try {
+      ZIO(_ => Right(a))
+    } catch {
+      case e: Throwable => ZIO(_ => Left(e))
+    }
 
-     def fail[E](e: E): ZIO[Any, E, Nothing] = ZIO(_ => Left(e))
-   }
-
+    def fail[E](e: E): ZIO[Any, E, Nothing] = ZIO(_ => Left(e))
+  }
 
 
   /**
@@ -48,20 +46,16 @@ object toyModel {
    */
 
 
-
   /** *
    * Напишите консольное echo приложение с помощью нашего игрушечного ZIO
    */
 
-    val echo: ZIO[Any, Throwable, Unit] = for{
-      str <- ZIO.effect(StdIn.readLine())
-      _ <- ZIO.effect(println(str))
-    } yield ()
+  val echo: ZIO[Any, Throwable, Unit] = for {
+    str <- ZIO.effect(StdIn.readLine())
+    _ <- ZIO.effect(println(str))
+  } yield ()
 
   ZIO.effect(StdIn.readLine()).flatMap(str => ZIO.effect(println(str)))
-
-
-
 
 
   type Error
@@ -103,13 +97,11 @@ object zioConstructors {
   // Option[Int]
 
 
-
   // From option
-  lazy val opt : Option[Int] = ???
+  lazy val opt: Option[Int] = ???
   lazy val z6: IO[Option[Nothing], Int] = ZIO.fromOption(opt)
   lazy val z7: UIO[Option[Int]] = z6.option
   lazy val z8: IO[Option[Nothing], Int] = z7.some
-
 
 
   // From either
@@ -123,9 +115,10 @@ object zioConstructors {
 
 
   def getUser(): Task[Option[User]] = ???
+
   def getAddress(u: User): Task[Option[Address]] = ???
 
-  for{
+  for {
     user <- getUser().some
     address <- getAddress(user)
   } yield address
@@ -147,7 +140,6 @@ object zioConstructors {
   lazy val _: IO[Int, Nothing] = ZIO.fail(10)
 
 }
-
 
 
 object zioOperators {
@@ -185,7 +177,6 @@ object zioOperators {
   lazy val greetAndEcho = ???
 
 
-
   // greet and echo улучшенный
   lazy val _: ZIO[Any, Throwable, Unit] = ???
 
@@ -221,7 +212,7 @@ object zioOperators {
   /**
    * последовательная комбинация эффектов a и b
    */
-  lazy val ab2: ZIO[Any, Throwable, String] = a  zipRight b
+  lazy val ab2: ZIO[Any, Throwable, String] = a zipRight b
 
   /**
    * последовательная комбинация эффектов a и b
@@ -237,16 +228,16 @@ object zioOperators {
 
 
   /**
-    * 
-    * Другой эффект в случае ошибки
-    */
+   *
+   * Другой эффект в случае ошибки
+   */
 
   lazy val ab5 = a.orElse(ZIO.succeed(0))
 
   /**
-    * 
-    * A as B
-    */
+   *
+   * A as B
+   */
 
   lazy val c: ZIO[Any, Nothing, Int] = ZIO.unit.as(10) // ZIO.unit.flatMap(_ => ZIO.succeed(10))
 

@@ -4,19 +4,18 @@ import zio.ZIO
 import zio.console.{getStrLn, putStrLn}
 import zio.duration.durationInt
 import zio.random.Random
-import zio.test.Assertion.{anything, equalTo, hasSize, isSubtype, throws}
-import zio.test.{DefaultRunnableSpec, ZSpec}
+import zio.test.Assertion.{anything, equalTo, isSubtype, throws}
+import zio.test.TestAspect._
 import zio.test._
 import zio.test.environment._
-import zio.test.TestAspect._
 
-import scala.language.postfixOps
 import java.io.IOException
+import scala.language.postfixOps
 
 
-object BasicZIOSpec extends DefaultRunnableSpec{
+object BasicZIOSpec extends DefaultRunnableSpec {
 
-  val greeter: ZIO[zio.console.Console, IOException, Unit] = for{
+  val greeter: ZIO[zio.console.Console, IOException, Unit] = for {
     _ <- putStrLn("Как тебя зовут")
     name <- getStrLn
     _ <- putStrLn(s"Привет, $name")
@@ -43,15 +42,15 @@ object BasicZIOSpec extends DefaultRunnableSpec{
       testM("simple effect")(
         assertM(ZIO.succeed(2 * 2))(equalTo(4))
       ),
-      testM("int addition is associative"){
-        check(intGen, intGen, intGen){ (x, y, z) =>
+      testM("int addition is associative") {
+        check(intGen, intGen, intGen) { (x, y, z) =>
           val left = (x + y) + z
           val right = x + (y + z)
           assert(left)(equalTo(right))
         }
       },
       testM("testConsole")(
-        for{
+        for {
           _ <- TestConsole.feedLines("Alex", "18")
           _ <- greeter
           value <- TestConsole.output
@@ -60,7 +59,7 @@ object BasicZIOSpec extends DefaultRunnableSpec{
         }
       ),
       testM("test clock")(
-        for{
+        for {
           fiber <- app.fork
           _ <- TestClock.adjust(2 seconds)
           _ <- fiber.join
@@ -71,7 +70,7 @@ object BasicZIOSpec extends DefaultRunnableSpec{
       ),
       testM("counter")(
         assertM(zioDS.ref.updateCounter)(equalTo(5))
-      )@@flaky
+      ) @@ flaky
     )
   )
 }

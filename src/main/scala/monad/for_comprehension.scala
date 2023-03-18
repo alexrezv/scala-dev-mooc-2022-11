@@ -12,7 +12,7 @@ object for_comprehension {
 
     val anotherResult: Wrap[Int] = NonEmptyWrap(100)
 
-    val r2 =for {
+    val r2 = for {
       res <- result
       another <- anotherResult
     } yield res + another

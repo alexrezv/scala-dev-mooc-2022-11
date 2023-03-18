@@ -1,34 +1,33 @@
 package module1
 
-object pattern_matching{
-     // Pattern matching
-
-
+object pattern_matching {
+  // Pattern matching
 
 
   /**
    * Матчинг на типы
    */
 
-   val i: Any = ???
+  val i: Any = ???
 
-   i match {
-     case Int => println("Int")
-     case v: String => println("String")
-     // case v: List[String] => //non-variable type argument String in type pattern List[String] (the underlying of List[String]) is unchecked since it is eliminated by erasure
-     // case v: List[Int] => //same
-   }
+  i match {
+    case Int => println("Int")
+    case v: String => println("String")
+    // case v: List[String] => //non-variable type argument String in type pattern List[String] (the underlying of List[String]) is unchecked since it is eliminated by erasure
+    // case v: List[Int] => //same
+  }
 
 
   /**
    * Структурный матчинг
    */
 
-  sealed trait Animal{
+  sealed trait Animal {
     def name: String
+
     def age: Int
 
-    def whoIam: String  = this match {
+    def whoIam: String = this match {
       case Dog(name, age) => s"I'm dog $name"
       case Cat(name, age) => s"I'm cat $name"
     }
@@ -36,6 +35,7 @@ object pattern_matching{
 
 
   case class Dog(name: String, age: Int) extends Animal
+
   case class Cat(name: String, age: Int) extends Animal
 
   /**
@@ -62,6 +62,7 @@ object pattern_matching{
     case Cat(name, age) =>
     case _ =>
   }
+
   /**
    * Матчинг с условием (гарды)
    */
@@ -79,11 +80,12 @@ object pattern_matching{
    */
 
   def treatCat(cat: Cat) = ???
+
   def treatDog(dog: Dog) = ???
 
   def treat(a: Animal): Animal = a match {
-    case d @ Dog(_, _) =>  treatDog(d)
-    case c @ Cat(_, _) =>  treatCat(c)
+    case d@Dog(_, _) => treatDog(d)
+    case c@Cat(_, _) => treatCat(c)
   }
 
   val Hello = "hello"
@@ -96,26 +98,21 @@ object pattern_matching{
   }
 
 
-
   /**
    * Списки
    */
 
 
+  /**
+   * используя паттерн матчинг напечатать имя и возраст
+   */
 
 
+  final case class Employee(name: String, address: Address)
 
+  final case class Address(street: String, number: Int)
 
-      /**
-       * используя паттерн матчинг напечатать имя и возраст
-       */
-
-
-
-      final case class Employee(name: String, address: Address)
-      final case class Address(street: String, number: Int)
-
-      val alex = Employee("Alex", Address("XXX", 221))
+  val alex = Employee("Alex", Address("XXX", 221))
 
   /**
    * воспользовавшись паттерн матчингом напечатать номер из поля адрес
@@ -154,48 +151,52 @@ object pattern_matching{
   }
 
 
-      /**
-       *
-       * Мы можем поместить кусок паттерна в переменную использую `as` паттерн,
-       * x @ ..., где x это любая переменная.
-       * Это переменная может использоваться, как в условии,
-       * так и внутри кейса
-       */
+  /**
+   *
+   * Мы можем поместить кусок паттерна в переменную использую `as` паттерн,
+   * x @ ..., где x это любая переменная.
+   * Это переменная может использоваться, как в условии,
+   * так и внутри кейса
+   */
 
-        trait PaymentMethod
-        case object Card extends PaymentMethod
-        case object WireTransfer extends PaymentMethod
-        case object Cash extends PaymentMethod
+  trait PaymentMethod
 
-        case class Order(paymentMethod: PaymentMethod)
+  case object Card extends PaymentMethod
 
-        lazy val order: Order = ???
+  case object WireTransfer extends PaymentMethod
 
-        lazy val pm: PaymentMethod = ???
+  case object Cash extends PaymentMethod
 
+  case class Order(paymentMethod: PaymentMethod)
 
-        def checkByCard(o: Order) = ???
+  lazy val order: Order = ???
 
-        def checkOther(o: Order) = ???
+  lazy val pm: PaymentMethod = ???
 
 
+  def checkByCard(o: Order) = ???
 
-      /**
-       * Мы можем использовать вертикальную черту `|` для матчинга на альтернативы
-       */
+  def checkOther(o: Order) = ???
 
-       sealed trait A
-       case class B(v: Int) extends A
-       case class C(v: Int) extends A
-       case class D(v: Int) extends A
 
-       val a: A = ???
+  /**
+   * Мы можем использовать вертикальную черту `|` для матчинга на альтернативы
+   */
+
+  sealed trait A
+
+  case class B(v: Int) extends A
+
+  case class C(v: Int) extends A
+
+  case class D(v: Int) extends A
+
+  val a: A = ???
 
   a match {
     case B(_) | C(_) =>
     case D(v) =>
   }
-
 
 
 }

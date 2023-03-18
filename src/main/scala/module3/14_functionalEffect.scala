@@ -41,25 +41,29 @@ object functional_effects {
        * 1. Объявить исполняемую модель Console
        */
 
-      case class Console[A](run: () => A){ self =>
+      case class Console[A](run: () => A) {
+        self =>
 
         def flatMap[B](f: A => Console[B]): Console[B] =
           Console.succeed(f(self.run()).run())
+
         def map[B](f: A => B): Console[B] =
           flatMap(a => Console.succeed(f(a)))
       }
 
-      object Console{
+      object Console {
         def succeed[A](a: => A): Console[A] = Console(() => a)
+
         def printLine(str: String): Console[Unit] = Console(() => println(str))
+
         def readLine(): Console[String] = Console(() => StdIn.readLine())
       }
 
-//      val greet = {
-//        println("Как тебя зовут?")
-//        val name = StdIn.readLine()
-//        println(s"Привет, $name")
-//      }
+      //      val greet = {
+      //        println("Как тебя зовут?")
+      //        val name = StdIn.readLine()
+      //        println(s"Привет, $name")
+      //      }
 
       val p1: Console[Unit] = for {
         _ <- Console.printLine("Как тебя зовут?")
@@ -68,7 +72,7 @@ object functional_effects {
       } yield ()
 
       val p2 = for {
-        _<- Console.printLine("Сколько тебе лет?")
+        _ <- Console.printLine("Сколько тебе лет?")
         age <- Console.readLine()
         _ <- if (age.toInt >= 18) Console.printLine("Можешь проходить") else Console.printLine("Ты еще не можешь пройти")
       } yield ()
@@ -94,7 +98,8 @@ object functional_effects {
        * 1. Объявить декларативную модель Console
        */
 
-      sealed trait Console[A] { self =>
+      sealed trait Console[A] {
+        self =>
 
         def flatMap[B](f: A => Console[B]): Console[B] = FlatMap(self, f)
 
@@ -104,20 +109,25 @@ object functional_effects {
         }
 
       }
+
       case class Succeed[A](v: () => A) extends Console[A]
+
       case class PrintLine[A](str: String, rest: Console[A]) extends Console[A]
+
       case class ReadLine[A](str: String => Console[A]) extends Console[A]
+
       case class FlatMap[A, B](a: Console[A], f: A => Console[B]) extends Console[B]
+
       case class Zip[A, B](a: Console[A], b: Console[B]) extends Console[(A, B)]
 
 
-      object Console{
+      object Console {
 
         def succeed[A](v: => A): Console[A] = Succeed(() => v)
+
         def printLine(str: String): Console[Unit] = PrintLine(str, succeed())
+
         def readLine: Console[String] = ReadLine(str => succeed(str))
-
-
 
 
       }
@@ -133,14 +143,14 @@ object functional_effects {
           PrintLine(s"Привет, $name", Succeed(() => ())))
       )
 
-      val p2 = for{
+      val p2 = for {
         _ <- Console.printLine("Как тебя зовут?")
         name <- Console.readLine
         _ <- Console.printLine(s"Привет, $name")
       } yield ()
 
       val p3 = for {
-        _<- Console.printLine("Сколько тебе лет?")
+        _ <- Console.printLine("Сколько тебе лет?")
         age <- Console.readLine
         _ <- if (age.toInt >= 18) Console.printLine("Можешь проходить") else Console.printLine("Ты еще не можешь пройти")
       } yield ()
@@ -159,23 +169,19 @@ object functional_effects {
         case FlatMap(a: Console[A], ff: (A => Console[B])) =>
           interpret(ff(interpret(a)))
       }
+
       def interpretString = ???
-
-
-
-
 
 
       /**
        * 2. Написать конструкторы
-       * 
+       *
        */
 
 
       /**
        * 3. Описать желаемую программу с помощью нашей модели
        */
-
 
 
       /**
@@ -188,7 +194,6 @@ object functional_effects {
        * 5. Написать интерпретатор для нашей ф-циональной модели
        *
        */
-
 
 
       /**

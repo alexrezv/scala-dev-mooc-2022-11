@@ -1,7 +1,6 @@
 package module3
 
-import zio.{IO, Task, UIO, URIO}
-import zio.console.{Console, putStrLn}
+import zio.{IO, Task}
 
 object zioErrorHandling {
 
@@ -16,16 +15,17 @@ object zioErrorHandling {
   }
 
 
-  case class ZIO[-R, +E, +A](run: R => Either[E, A]) {self =>
+  case class ZIO[-R, +E, +A](run: R => Either[E, A]) {
+    self =>
 
     /**
-      * 
-      * Базовый оператор для работы с ошибками
-      */
+     *
+     * Базовый оператор для работы с ошибками
+     */
 
     def foldM[R1 <: R, E1, B](
-               failure: E => ZIO[R1, E1, B],
-               success: A => ZIO[R1, E1, B]): ZIO[R1, E1, B] =
+                               failure: E => ZIO[R1, E1, B],
+                               success: A => ZIO[R1, E1, B]): ZIO[R1, E1, B] =
       ZIO(r => self.run(r).fold(
         e => failure(e),
         a => success(a)
@@ -59,8 +59,6 @@ object zioErrorHandling {
   }
 
 
-
-
   sealed trait IntegrationError
 
   case object ConnectionFailed extends IntegrationError
@@ -83,14 +81,13 @@ object zioErrorHandling {
    * 1. Какой будет тип на выходе, если мы скомбинируем эти два эффекта с помощью zip
    */
 
-   val z1: zio.IO[Any, (String, String)] = io1 zip io2
+  val z1: zio.IO[Any, (String, String)] = io1 zip io2
 
   /**
    * Можем ли мы как-то избежать потерю информации об ошибке, в случае композиции?
-    */
+   */
 
   lazy val io3: zio.IO[Either[String, Int], (String, String)] = io1.mapError(Left(_)).zip(io2.mapError(Right(_)))
-
 
 
   def either: Either[String, Int] = ???
@@ -102,7 +99,7 @@ object zioErrorHandling {
   /**
    * Залогировать ошибку effFromEither, не меняя ее тип и тип возвращаемого значения
    */
-  lazy val z2: zio.ZIO[Any, String, UserId] = effFromEither.tapError{ e =>
+  lazy val z2: zio.ZIO[Any, String, UserId] = effFromEither.tapError { e =>
     zio.ZIO.effect(println(e)).orDie
   }
 
@@ -123,23 +120,25 @@ object zioErrorHandling {
 
   // Разные типы ошибок
 
-    type User = String
-    type UserId = Int
+  type User = String
+  type UserId = Int
 
-    sealed trait NotificationError
-    case object NotificationByEmailFailed extends NotificationError
-    case object NotificationBySMSFailed extends NotificationError
+  sealed trait NotificationError
 
-    def getUserById(userId: UserId): Task[User] = ???
+  case object NotificationByEmailFailed extends NotificationError
 
-    def sendEmail(user: User, msg: String): IO[NotificationByEmailFailed.type, Unit] = ???
+  case object NotificationBySMSFailed extends NotificationError
 
-    def sendSMS(user: User, msg: String): IO[NotificationBySMSFailed.type, Unit] = ???
+  def getUserById(userId: UserId): Task[User] = ???
 
-    def sendNotification(userId: UserId): IO[NotificationError, Unit] = for {
-      user <- getUserById(1).orDie
-      _ <- sendEmail(user, "Hello")
-      _ <- sendSMS(user, "hello")
-    } yield ()
+  def sendEmail(user: User, msg: String): IO[NotificationByEmailFailed.type, Unit] = ???
+
+  def sendSMS(user: User, msg: String): IO[NotificationBySMSFailed.type, Unit] = ???
+
+  def sendNotification(userId: UserId): IO[NotificationError, Unit] = for {
+    user <- getUserById(1).orDie
+    _ <- sendEmail(user, "Hello")
+    _ <- sendSMS(user, "hello")
+  } yield ()
 
 }

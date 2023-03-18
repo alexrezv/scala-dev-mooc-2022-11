@@ -1,12 +1,10 @@
 package module3
 
-import zio.{Ref, Task, UIO, URIO, ZIO, clock}
-import zio.clock.{Clock, sleep}
-import zio.console.{Console, putStrLn}
+import zio.clock.Clock
 import zio.duration.durationInt
 import zio.internal.Executor
+import zio.{Ref, Task, UIO, URIO, ZIO, clock}
 
-import java.io.IOException
 import java.util.concurrent.TimeUnit
 import scala.language.postfixOps
 
@@ -18,23 +16,21 @@ object zioConcurrency {
   val currentTime: URIO[Clock, Long] = clock.currentTime(TimeUnit.SECONDS)
 
 
-
-
   /**
    * Напишите эффект, который будет считать время выполнения любого эффекта
    */
 
-    // время начала
-    // выполнить работу
-    // получить время
-    // вернуть разницу
+  // время начала
+  // выполнить работу
+  // получить время
+  // вернуть разницу
 
-  def printEffectRunningTime[R, E, A](zio: ZIO[R, E, A]): ZIO[Clock with R, E, A] = for{
-      start <- currentTime
-      r <- zio
-      end <- currentTime
-      _ <- ZIO.effect(println(s"Running time ${end - start}")).orDie
-    } yield r
+  def printEffectRunningTime[R, E, A](zio: ZIO[R, E, A]): ZIO[Clock with R, E, A] = for {
+    start <- currentTime
+    r <- zio
+    end <- currentTime
+    _ <- ZIO.effect(println(s"Running time ${end - start}")).orDie
+  } yield r
 
 
   val exchangeRates: Map[String, Double] = Map(
@@ -55,15 +51,14 @@ object zioConcurrency {
   /**
    * Создать эффект который печатает в консоль GetExchangeRatesLocation1 спустя 3 секунды
    */
-     lazy val getExchangeRatesLocation1 =
-       sleep3Seconds zipRight ZIO.effect(println("GetExchangeRatesLocation1"))
+  lazy val getExchangeRatesLocation1 =
+    sleep3Seconds zipRight ZIO.effect(println("GetExchangeRatesLocation1"))
 
   /**
    * Создать эффект который печатает в консоль GetExchangeRatesLocation2 спустя 1 секунду
    */
-      lazy val getExchangeRatesLocation2 =
-        sleep1Second zipRight ZIO.effect(println("GetExchangeRatesLocation2"))
-
+  lazy val getExchangeRatesLocation2 =
+    sleep1Second zipRight ZIO.effect(println("GetExchangeRatesLocation2"))
 
 
   /**
@@ -74,7 +69,7 @@ object zioConcurrency {
   /**
    * Написать эффект котрый получит курсы из обеих локаций паралельно
    */
-  lazy val getFrom2Locations2: ZIO[Clock, Throwable, Unit] = for{
+  lazy val getFrom2Locations2: ZIO[Clock, Throwable, Unit] = for {
     fiber <- getExchangeRatesLocation1.fork
     fiber2 <- getExchangeRatesLocation2.fork
     _ <- fiber.join
@@ -87,56 +82,53 @@ object zioConcurrency {
    */
 
 
-   lazy val writeUserToDB: ZIO[Clock, Throwable, Unit] =
-     /*sleep1Second zipRight*/ ZIO.effect(println("writeUserToDB"))
+  lazy val writeUserToDB: ZIO[Clock, Throwable, Unit] =
+  /*sleep1Second zipRight*/ ZIO.effect(println("writeUserToDB"))
 
-   lazy val sendMail: ZIO[Clock, Throwable, Unit] =
-     /*sleep1Second zipRight*/ ZIO.effect(println("sendMail"))
+  lazy val sendMail: ZIO[Clock, Throwable, Unit] =
+  /*sleep1Second zipRight*/ ZIO.effect(println("sendMail"))
 
   /**
    * Написать эффект котрый сохранит в базу и отправит почту паралельно
    */
 
-  lazy val writeAndSend = for{
+  lazy val writeAndSend = for {
     _ <- writeUserToDB.fork
     _ <- sendMail.fork
-//    _ <- sleep1Second
+    //    _ <- sleep1Second
   } yield ()
 
 
   /**
-   *  Greeter
+   * Greeter
    */
 
   lazy val greeter: ZIO[Clock, Throwable, Nothing] = (sleep1Second zipRight ZIO.effect(println("Hello"))).forever
 
-  lazy val g1 = for{
+  lazy val g1 = for {
     f <- ZIO.effect(while (true) println("Hello")).fork
     _ <- f.interrupt
     _ <- sleep1Second
   } yield ()
 
 
-  /***
+  /** *
    * Greeter 2
-   * 
-   * 
-   * 
+   *
+   *
+   *
    */
 
- lazy val hello: Task[Nothing] = ZIO.effect(println("Hello")) *> hello
+  lazy val hello: Task[Nothing] = ZIO.effect(println("Hello")) *> hello
 
- lazy val greeter2 = ???
-  
+  lazy val greeter2 = ???
+
 
   /**
    * Прерывание эффекта
    */
 
-   lazy val app3 = ???
-
-
-
+  lazy val app3 = ???
 
 
   /**
@@ -155,11 +147,11 @@ object zioConcurrency {
    * и при этом обеспечивает сквозную нумерацию вызовов
    */
 
-  
+
   lazy val app1 = ???
 
   /**
-   *  Concurrent operators
+   * Concurrent operators
    */
 
 
@@ -167,7 +159,7 @@ object zioConcurrency {
 
   lazy val p2 = getExchangeRatesLocation1 race getExchangeRatesLocation2
 
-  lazy val p3: ZIO[Clock, Throwable, List[Unit]] = ZIO.foreachParN(1)(List(1, 2, 3)){ el =>
+  lazy val p3: ZIO[Clock, Throwable, List[Unit]] = ZIO.foreachParN(1)(List(1, 2, 3)) { el =>
     sleep1Second zipRight ZIO.effect(println(el))
   }
 
@@ -183,7 +175,7 @@ object zioConcurrency {
 
   lazy val executor: Executor = ???
 
-  lazy val eff = for{
+  lazy val eff = for {
     f1 <- doSomething.fork
     _ <- doSomethingElse
     r <- f1.join
@@ -192,21 +184,18 @@ object zioConcurrency {
   lazy val result = eff.lock(executor)
 
 
-
   // Правило 2
   lazy val executor1: Executor = ???
   lazy val executor2: Executor = ???
 
 
-
-  lazy val eff2 = for{
-      f1 <- doSomething.lock(executor2).fork
-      _ <- doSomethingElse
-      r <- f1.join
-    } yield r
+  lazy val eff2 = for {
+    f1 <- doSomething.lock(executor2).fork
+    _ <- doSomethingElse
+    r <- f1.join
+  } yield r
 
   lazy val result2 = eff2.lock(executor)
-
 
 
 }

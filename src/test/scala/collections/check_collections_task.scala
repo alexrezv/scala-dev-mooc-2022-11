@@ -5,7 +5,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 
 class check_collections_task extends AnyFlatSpec {
 
-  "check capitalizeIgnoringASCII" should "ok" in  {
+  "check capitalizeIgnoringASCII" should "ok" in {
     assert(capitalizeIgnoringASCII(List("Lorem", "ipsum", "dolor", "sit", "amet")) == List("Lorem", "IPSUM", "DOLOR", "SIT", "AMET"))
     assert(capitalizeIgnoringASCII(List("Оказывается", ",", "ЗвУк", "КЛАВИШ")) === List("Оказывается", ",", "звук", "клавиш"))
   }

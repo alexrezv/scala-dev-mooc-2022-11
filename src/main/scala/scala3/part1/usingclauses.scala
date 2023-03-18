@@ -1,4 +1,5 @@
 package part1.usingclauses
+
 /*
 def compare(x: T, y: T): Int
   extension (x: T)

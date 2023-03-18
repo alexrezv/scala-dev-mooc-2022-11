@@ -3,11 +3,11 @@ package module3.zio_homework
 import zio.config.ReadError
 import zio.config.ReadError.SourceError
 import zio.config.typesafe.TypesafeConfig
-import zio.{Cause, Has, IO, Layer, Task, ZIO}
+import zio.{IO, Layer, ZIO}
 
 
 package object config {
-   case class AppConfig(host: String, port: String)
+  case class AppConfig(host: String, port: String)
 
   import zio.config.magnolia.DeriveConfigDescriptor.descriptor
 
@@ -15,7 +15,7 @@ package object config {
 
   type Configuration = zio.Has[AppConfig]
 
-  object Configuration{
+  object Configuration {
     val live: Layer[ReadError[String], Configuration] = TypesafeConfig.fromDefaultLoader(configDescriptor)
   }
 
