@@ -33,6 +33,14 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "3.2.15" % Test
 ) ++ Dependencies.zio ++ Dependencies.zioConfig
 
+libraryDependencies += Dependencies.liquibase
+libraryDependencies += Dependencies.postgres
+libraryDependencies += Dependencies.logback
+libraryDependencies += Dependencies.zioHttp
+libraryDependencies ++= Dependencies.testContainers
+libraryDependencies ++= Dependencies.quill
+libraryDependencies ++= Dependencies.circe
+
 addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
 
 // Here, `libraryDependencies` is a set of dependencies, and by using `+=`,
