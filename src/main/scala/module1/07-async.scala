@@ -135,7 +135,7 @@ object tryObj {
     val result: List[Int] = try {
       s.getLines().toList.map(_.toInt)
     } catch {
-      case e =>
+      case e: Throwable =>
         println(e.getMessage)
         Nil
     } finally {

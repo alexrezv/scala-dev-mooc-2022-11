@@ -7,6 +7,7 @@ import zio.duration.durationInt
 import zio.random._
 import zio.{Has, Layer, RIO, Schedule, URIO, ZIO, ZLayer, clock}
 
+import java.io.IOException
 import java.util.concurrent.TimeUnit
 import scala.language.postfixOps
 
@@ -44,7 +45,7 @@ package object zio_homework {
    */
 
 
-  def loadConfigOrDefault: URIO[Console, AppConfig] =
+  def loadConfigOrDefault: ZIO[Console, IOException, AppConfig] =
     config.load
       .tapError(e => putStrLn(e.getMessage()))
       .orElse(for {
@@ -80,7 +81,7 @@ package object zio_homework {
    * можно использовать ф-цию printEffectRunningTime, которую мы разработали на занятиях
    */
 
-  lazy val app: URIO[Clock with Console with Random, Int] =
+  lazy val app: ZIO[Clock with Console with Random, IOException, Int] =
     zioConcurrency.printEffectRunningTime(
       for {
         result <- ZIO.reduceAll(ZIO.effectTotal(0), effects)(_ + _)
@@ -93,7 +94,7 @@ package object zio_homework {
    * 4.4 Усовершенствуйте программу 4.3 так, чтобы минимизировать время ее выполнения
    */
 
-  lazy val appSpeedUp: URIO[Clock with Console with Random, Int] =
+  lazy val appSpeedUp: ZIO[Clock with Console with Random, IOException, Int] =
     zioConcurrency.printEffectRunningTime(
       for {
         result <- ZIO.reduceAllPar(ZIO.effectTotal(0), effects)(_ + _)
@@ -149,7 +150,7 @@ package object zio_homework {
 
   import module3.zio_homework.runningTimePrinter.{RunningTimePrinter, printEffectRunningTime}
 
-  lazy val appWithTimeLogg: URIO[Clock with Console with Random with RunningTimePrinter, Int] =
+  lazy val appWithTimeLogg: ZIO[RunningTimePrinter with Clock with Console with Random, IOException, Int] =
     printEffectRunningTime(app)
 
   /**
@@ -157,7 +158,7 @@ package object zio_homework {
    * Подготовьте его к запуску и затем запустите воспользовавшись ZioHomeWorkApp
    */
 
-  lazy val runApp: URIO[Clock with Console with Random, Int] =
+  lazy val runApp: ZIO[Clock with Console with Random, IOException, Int] =
     appWithTimeLogg.provideSomeLayer[Clock with Console with Random](RunningTimePrinter.live)
 
 }

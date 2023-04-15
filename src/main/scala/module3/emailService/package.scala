@@ -1,7 +1,9 @@
 package module3
 
 import zio.console.Console
-import zio.{Has, URIO, ZIO, ZLayer}
+import zio.{Has, ZIO, ZLayer}
+
+import java.io.IOException
 
 
 package object emailService {
@@ -16,17 +18,17 @@ package object emailService {
   object EmailService {
 
     trait Service {
-      def sendMail(email: Email): URIO[zio.console.Console, Unit]
+      def sendMail(email: Email): ZIO[Console, IOException, Unit]
     }
 
     val live = ZLayer.succeed(
       new Service {
-        override def sendMail(email: Email): URIO[Console, Unit] =
+        override def sendMail(email: Email): ZIO[Console, IOException, Unit] =
           zio.console.putStrLn(email.toString)
       }
     )
 
-    def sendMail(email: Email): URIO[EmailService with zio.console.Console, Unit] =
+    def sendMail(email: Email): ZIO[EmailService with Console, IOException, Unit] =
       ZIO.accessM(_.get.sendMail(email))
 
   }
